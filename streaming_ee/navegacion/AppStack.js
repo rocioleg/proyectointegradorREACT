@@ -1,7 +1,8 @@
 import React, {useContext} from 'react';
 import { View, Text, Button } from 'react-native';
 import { createStackNavigator } from "@react-navigation/stack";
-import { NavigationContainer } from '@react-navigation/native';
+
+import { createDrawerNavigator } from '@react-navigation/drawer';
 
 import Home from '../screens/Home';
 import Proximamente from '../screens/Proximamente';
@@ -12,13 +13,35 @@ import SearchScreen from '../screens/SearchScreen';
 
 import CatalogoScreen from '../screens/CatalogoScreen';
 
+import CategoriasScreen from '../screens/CategoriasScreen';
+
+import CustomDrawer from '../components/CustomDrawer';
+
 const Stack = createStackNavigator();
+const Drawer = createDrawerNavigator();
 
-import {AuthContext} from '../context/AuthContext'
+function Hamburguesa() {
+  return (
+    <Drawer.Navigator 
+    drawerContent={props => <CustomDrawer {...props} />}
+    options={{headerShown: false}}
+    screenOptions={{
+      drawerStyle: {
+        backgroundColor: 'black'
+      },
+      drawerActiveTintColor: 'yellow',
+    }}
+    >
+      <Drawer.Screen name="Inicio" options={{headerShown: false}} component={Home} />
+      <Drawer.Screen name="Categorias" options={{headerShown: false}} component={CategoriasScreen} />
 
+    </Drawer.Navigator>
+  );
+}
 const AppStack = () => {
   return (
       <Stack.Navigator options={{headerShown: false}}>
+        <Stack.Screen name="Menu" options={{headerShown: false}} component={Hamburguesa} />
         <Stack.Screen name="HomeHome" options={{headerShown: false}} component={Home} />
         <Stack.Screen name="Movie" options={{headerShown: false}} component={MovieScreen} />
         <Stack.Screen name="Person" options={{headerShown: false}} component={PersonScreen} />
@@ -31,6 +54,7 @@ const AppStack = () => {
 const ProximamenteStackNavigator = () => {
   return (
     <Stack.Navigator options={{headerShown: false}}>
+      <Stack.Screen name="Menu" options={{headerShown: false}} component={Hamburguesa} />
       <Stack.Screen name="ProximamenteTe" options={{headerShown: false}} component={Proximamente} />
       <Stack.Screen name="Movie" options={{headerShown: false}} component={MovieScreen} />
       <Stack.Screen name="Person" options={{headerShown: false}} component={PersonScreen} />
@@ -41,14 +65,17 @@ const ProximamenteStackNavigator = () => {
 
 const CatalogoStack = () => {
   return (
-    <Stack.Navigator >
-      <Stack.Screen name="Catalogo"options={{headerShown: false}} component={CatalogoScreen} />
+    <Stack.Navigator options={{headerShown: false}}>
+      <Stack.Screen name="Menu" options={{headerShown: false}} component={Hamburguesa} />
+      <Stack.Screen name="Catalogo" options={{headerShown: false}} component={CatalogoScreen} />
       <Stack.Screen name="Movie" options={{headerShown: false}} component={MovieScreen} />
       <Stack.Screen name="Person" options={{headerShown: false}} component={PersonScreen} />
       <Stack.Screen name="Search" options={{headerShown: false}} component={SearchScreen} />
     </Stack.Navigator>
   );
 }
+
+
 
 
 export {AppStack, ProximamenteStackNavigator, CatalogoStack};

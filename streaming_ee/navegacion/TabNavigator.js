@@ -28,8 +28,8 @@ const TabNavigator = () => {
     <Tab.Navigator  
     screenOptions={{
       headerShown: false,
-      activeTintColor: 'black', // Color de ícono activo
-      inactiveTintColor: 'white', // Color de ícono inactivo
+      activeTintColor: 'black', 
+      inactiveTintColor: 'white', 
       tabBarStyle: {backgroundColor: '#D4AF37', height: 55},
       tabBarLabelStyle: { color: 'black' }
     }}

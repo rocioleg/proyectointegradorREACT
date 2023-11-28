@@ -10,9 +10,8 @@ import TrendingMovie from "../components/TrendingMovies";
 import MovieList from "../components/MovieList";
 import { useNavigation } from "@react-navigation/native";
 import Loading from "../components/loading";
-import { fetchTopRatedMovies, fetchTrendingMovies, fetchUpcomingMovies } from "../api/moviedb";
-
 import { Ionicons } from '@expo/vector-icons';
+import { fetchTopRatedMovies, fetchTrendingMovies} from "../api/moviedb";
 
 export default function Home() {
     const [trending, setTrending] = useState([]);
@@ -20,7 +19,7 @@ export default function Home() {
     const [toRated, setToRated] = useState([]);
     const navigation = useNavigation();
     const [loading, setLoading] = useState(true);
-    const {logout} = useContext(AuthContext);
+    const { logout } = useContext(AuthContext);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     useEffect(() => {
@@ -41,8 +40,12 @@ export default function Home() {
         if (data && data.results) setToRated(data.results);
     }
 
-    const toggleMenu = () => {
-        setIsMenuOpen(!isMenuOpen);
+    const openDrawer = () => {
+        navigation.openDrawer(); 
+    };
+
+    const closeDrawer = () => {
+        navigation.closeDrawer(); 
     };
 
     return (
@@ -51,14 +54,14 @@ export default function Home() {
             <SafeAreaView className="mb-3" style={{ paddingTop: 30 }}>
                 <StatusBar style="light" />
                 <View className="flex-row justify-between items-center mx-4">
-                    {/*<Bars3CenterLeftIcon size="30" strokeWidth={2} color="white"/>*/}
-                    <TouchableOpacity onPress={toggleMenu}>
-                        {/* menú hamburguesa */}
-                        <Ionicons name="menu" size={30} color="white" />
+                    <TouchableOpacity onPress={openDrawer}> 
+                        <Ionicons name="menu-outline" size={30} color="white" />
                     </TouchableOpacity>
-                    <Text className="text-white text-3xl font-bold">
+
+                    <Text className="text-white text-3xl font-bold mx-auto">
                         <Text style={styles.text}>M</Text>ovies
                     </Text>
+
                     <TouchableOpacity onPress={() => navigation.navigate('Search')}>
                         <MagnifyingGlassIcon size="30" strokeWidth={2} color="white" />
                     </TouchableOpacity>
@@ -81,13 +84,6 @@ export default function Home() {
                     </ScrollView>
                 )
             }
-            {isMenuOpen && (
-                <View style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0, 0, 0, 0.5)', zIndex: 10 }}>
-                    <TouchableOpacity onPress={logout()}>
-                        <Text style={{ color: 'white', fontSize: 18, padding: 20 }}>Log Out</Text>
-                    </TouchableOpacity>
-                </View>
-            )}
         </View>
     )
 }

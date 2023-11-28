@@ -34,7 +34,7 @@ export default function SearchScreen(){
     }
     //const handleTextDebounce = useCallback(debounce(handleSearch, 400),[])
     return(
-        <SafeAreaView className="bg-neutral-800 flex-1">
+        <SafeAreaView className="bg-neutral-800 flex-1" style={{paddingTop: 30}}>
             <View className="mx-4 mb-3 flex-row justify-between items-center border border-neutral-500 rounded-full">
                 <TextInput
                     onChangeText={handleSearch}
@@ -47,7 +47,7 @@ export default function SearchScreen(){
                     onPress={()=>navigation.navigate('Home')}
                     className="rounded-full p-3 m-1 bg-neutral-500"
                 >
-                    <XMarkIcon size="25" color="white"/>
+                    <XMarkIcon size={25} color="white"/>
                 </TouchableOpacity>
             </View>
             {/*Results */}

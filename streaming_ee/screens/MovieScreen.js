@@ -10,6 +10,8 @@ import Cast from "../components/cast";
 import MovieList from "../components/MovieList";
 import Loading from "../components/loading";
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { Video } from 'react-native';
+
 import { fallbackMoviePoster, fetchMovieCredits, fetchMovieDetails, fetchSimilarMovies, image500 } from "../api/moviedb";
 
 var { width, height } = Dimensions.get('window');
@@ -28,6 +30,8 @@ export default function MovieScreen() {
     const { crearComentario, userInfo, buscarComentarios } = useContext(AuthContext);
     const [textoComentario, setTextoComentario] = useState('');
     const [comentarios, setComentarios] = useState([]);
+
+    const [playVideo, setPlayVideo] = useState(false);
 
     let moviename = 'pelicula';
 
@@ -67,17 +71,14 @@ export default function MovieScreen() {
     }
 
     const handleEnviarComentario = () => {
-        // Verificar que el campo de texto no esté vacío
         if (textoComentario.trim() !== '') {
             const nuevoComentario = {
-                user: userInfo.user,
+                user: userInfo.nombre,
                 texto: textoComentario,
             };
             crearComentario(nuevoComentario);
-            // Puedes realizar otras acciones luego de enviar el comentario, como limpiar el campo de texto
             setTextoComentario('');
         } else {
-            // Manejar el caso en el que el campo de texto esté vacío
             console.log('El campo de texto está vacío');
         }
     };
@@ -103,7 +104,7 @@ export default function MovieScreen() {
                         <Loading />
                     ) : (
                         <View>
-                            <Image //source={require('../assets/images/moviePoster2.png')}
+                            <Image
                                 source={{ uri: image500(movie?.poster_path) || fallbackMoviePoster }}
                                 style={{ width, height: height * 0.55 }}
                             />
@@ -117,7 +118,6 @@ export default function MovieScreen() {
                         </View>
                     )
                 }
-
             </View>
             {/*movie details */}
             <View className="space-y-3">
@@ -127,6 +127,10 @@ export default function MovieScreen() {
                         movie.title
                     }
                 </Text>
+
+                {/*LOGICA DE STREAMING*/}
+
+
                 {/*status, release, runtime*/}
                 {
                     movie?.id ? (
@@ -165,12 +169,22 @@ export default function MovieScreen() {
             <Cast navigation={navigation} cast={cast} />
 
             {/*similar movies */}
+
             <MovieList title="Similar Movies" hideSeeAll={true} data={similarMovies} />
-
-
+            
+            {/* MODIFICADO */}
+            
+            { loading ? (
+                <Loading />
+            ) : (
             <View style={estilos.container}>
                 {/* Lista de comentarios */}
-                <View style={estilos.comentariosContainer}>
+                <Text style={estilos.textComentarios}>
+                    Comentarios:
+                </Text>
+
+                <View style={[estilos.comentariosContainer, { paddingBottom: 20 }]}>
+
                     {/* Mostrar comentarios*/}
                     {comentarios.map((comentario, index) => (
                         <View key={index} style={estilos.comentarioItem}>
@@ -181,22 +195,24 @@ export default function MovieScreen() {
                             <Text style={estilos.comentarioUsuario}>{comentario.user}</Text>
                         </View>
                     ))}
-
                 </View>
 
                 {/* Agregar un comentario */}
                 <TextInput
-                    placeholder="Escribe tu comentario"
+                    placeholder="¿Qué Opinas?"
+                    placeholderTextColor="#999999"
                     value={textoComentario}
                     onChangeText={(text) => setTextoComentario(text)}
                     multiline
                     style={estilos.textInput}
                 />
+
                 <TouchableOpacity style={estilos.button} onPress={handleEnviarComentario}>
                     <Text style={estilos.buttonText}>Enviar Comentario</Text>
                 </TouchableOpacity>
-            </View>
 
+            </View>
+            )}
         </ScrollView>
     )
 }
@@ -204,7 +220,7 @@ export default function MovieScreen() {
 const estilos = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#000', // Fondo oscuro
+        backgroundColor: '#000',
         padding: 20,
     },
     comentariosContainer: {
@@ -212,6 +228,9 @@ const estilos = StyleSheet.create({
     },
     comentarioItem: {
         marginBottom: 10,
+        borderBottomColor: '#999999',
+        borderBottomWidth: 1,
+        paddingBottom: 10
     },
     comentarioTexto: {
         color: '#FFF',
@@ -228,18 +247,24 @@ const estilos = StyleSheet.create({
         color: '#FFF',
         padding: 10,
         marginBottom: 10,
-        borderRadius: 10, 
-      },
-      button: {
+        borderRadius: 10,
+    },
+    button: {
         backgroundColor: '#3F51B5',
-        paddingVertical: 8, 
+        paddingVertical: 8,
         paddingHorizontal: 15,
         alignItems: 'center',
-        borderRadius: 5,
-      },
-      buttonText: {
+        borderRadius: 15,
+    },
+    buttonText: {
         color: '#FFF',
         fontWeight: 'bold',
-        fontSize: 14, 
-      },
+        fontSize: 14,
+    },
+    textComentarios: {
+        color: '#FFF',
+        fontWeight: 'bold',
+        fontSize: 26,
+        paddingBottom: 10
+    }
 });
