@@ -21,7 +21,6 @@ export default function Home() {
     const [toRated, setToRated] = useState([]);
     const navigation = useNavigation();
     const [loading, setLoading] = useState(true);
-    ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT);
 
     useEffect(() => {
         getTrendingMovies();

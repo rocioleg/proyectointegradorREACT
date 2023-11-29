@@ -9,21 +9,16 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { Dimensions } from 'react-native';
 
 const VideoScreen = ({ navigation }) => {
-  const [inFullscreen, setInFullscreen] = useState(false);
   const refVideo = useRef(null);
-  const { height, width } = Dimensions.get('screen');
+  const { height, width } = Dimensions.get('window');
   const videoUrl = require('../assets/videos/wishtrailer.mp4');
-
-  useEffect(() => {
-  ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE);
-  },[]);
 
   return (
     <ScrollView contentContainerStyle={styles.scrollViewContent}>
       
     <View style={styles.container}>
       <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-        <Ionicons name="ios-arrow-back" size={24} color="white" />
+        <Ionicons name="ios-arrow-back" size={30} color="white" />
       </TouchableOpacity>
 
       <VideoPlayer
@@ -33,7 +28,9 @@ const VideoScreen = ({ navigation }) => {
           source: videoUrl,
           ref: refVideo,
         }}
-        style={{ width: Dimensions.get('screen').width, height: Dimensions.get('screen').height}}
+        style={{ 
+          width: width, 
+          height: height}}
         slider={{
           visible: true,
         }}

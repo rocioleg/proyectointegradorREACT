@@ -20,9 +20,6 @@ import { AuthContext } from '../context/AuthContext'
 
 export default function MovieScreen() {
     const { params: item } = useRoute();
-
-    console.log("item que se pasa: ");
-    console.log(item);
     
     const [isFavourite, toggleFavourite] = useState(false);
     const navigation = useNavigation();
@@ -44,7 +41,6 @@ export default function MovieScreen() {
 
     useEffect(() => {
         getComentarios();
-        ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT);
     }, [])
 
     const getComentarios = async () => {
