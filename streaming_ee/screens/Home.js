@@ -12,15 +12,16 @@ import { useNavigation } from "@react-navigation/native";
 import Loading from "../components/loading";
 import { Ionicons } from '@expo/vector-icons';
 import { fetchTopRatedMovies, fetchTrendingMovies} from "../api/moviedb";
+import * as ScreenOrientation from 'expo-screen-orientation';
 
 export default function Home() {
+    
     const [trending, setTrending] = useState([]);
     //const [upcoming, setUpcoming]= useState([]);
     const [toRated, setToRated] = useState([]);
     const navigation = useNavigation();
     const [loading, setLoading] = useState(true);
-    const { logout } = useContext(AuthContext);
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT);
 
     useEffect(() => {
         getTrendingMovies();
@@ -44,24 +45,24 @@ export default function Home() {
         navigation.openDrawer(); 
     };
 
-    const closeDrawer = () => {
-        navigation.closeDrawer(); 
-    };
-
     return (
         <View className="flex-1 bg-neutral-800">
-            {/*busqueda y logo */}
+            
             <SafeAreaView className="mb-3" style={{ paddingTop: 30 }}>
                 <StatusBar style="light" />
                 <View className="flex-row justify-between items-center mx-4">
+
+                    {/* MENU HAMBURGUESA */}
                     <TouchableOpacity onPress={openDrawer}> 
                         <Ionicons name="menu-outline" size={30} color="white" />
                     </TouchableOpacity>
 
+                    {/* TITULO */}
                     <Text className="text-white text-3xl font-bold mx-auto">
                         <Text style={styles.text}>M</Text>ovies
                     </Text>
-
+                    
+                    {/*BUSQUEDA*/}
                     <TouchableOpacity onPress={() => navigation.navigate('Search')}>
                         <MagnifyingGlassIcon size="30" strokeWidth={2} color="white" />
                     </TouchableOpacity>

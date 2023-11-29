@@ -1,6 +1,6 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
 import React, { useEffect, useState, useContext } from "react";
-import { View, Text, ScrollView, TouchableOpacity, Dimensions, Image, Button, TextInput, StyleSheet } from "react-native";
+import { View, Text, ScrollView, TouchableOpacity, Dimensions, Image, StatusBar, TextInput, StyleSheet } from "react-native";
 import { ChevronLeftIcon } from "react-native-heroicons/outline";
 import { HeartIcon } from "react-native-heroicons/solid";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -10,7 +10,7 @@ import Cast from "../components/cast";
 import MovieList from "../components/MovieList";
 import Loading from "../components/loading";
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { Video } from 'react-native';
+import * as ScreenOrientation from 'expo-screen-orientation';
 
 import { fallbackMoviePoster, fetchMovieCredits, fetchMovieDetails, fetchSimilarMovies, image500 } from "../api/moviedb";
 
@@ -20,6 +20,10 @@ import { AuthContext } from '../context/AuthContext'
 
 export default function MovieScreen() {
     const { params: item } = useRoute();
+
+    console.log("item que se pasa: ");
+    console.log(item);
+    
     const [isFavourite, toggleFavourite] = useState(false);
     const navigation = useNavigation();
     const [cast, setCast] = useState([]);
@@ -30,11 +34,7 @@ export default function MovieScreen() {
     const { crearComentario, userInfo, buscarComentarios } = useContext(AuthContext);
     const [textoComentario, setTextoComentario] = useState('');
     const [comentarios, setComentarios] = useState([]);
-
-    const [playVideo, setPlayVideo] = useState(false);
-
-    let moviename = 'pelicula';
-
+    
     useEffect(() => {
         setLoading(true);
         getMovieDetails(item.id);
@@ -44,12 +44,13 @@ export default function MovieScreen() {
 
     useEffect(() => {
         getComentarios();
+        ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT);
     }, [])
 
     const getComentarios = async () => {
         const data = await buscarComentarios();
         if (data) setComentarios(data.data);
-        console.log(data.data);
+        //console.log(data.data);
     }
 
     const getMovieDetails = async id => {
@@ -79,7 +80,7 @@ export default function MovieScreen() {
             crearComentario(nuevoComentario);
             setTextoComentario('');
         } else {
-            console.log('El campo de texto está vacío');
+            //console.log('El campo de texto está vacío');
         }
     };
 
@@ -130,6 +131,10 @@ export default function MovieScreen() {
 
                 {/*LOGICA DE STREAMING*/}
 
+                <TouchableOpacity onPress={() => navigation.navigate('VideoPlay')}>
+                    <Icon name="play-circle" size={60} color="#eab308" style={{ textAlign: 'center', marginTop: 10 }} />
+                </TouchableOpacity>
+
 
                 {/*status, release, runtime*/}
                 {
@@ -171,47 +176,47 @@ export default function MovieScreen() {
             {/*similar movies */}
 
             <MovieList title="Similar Movies" hideSeeAll={true} data={similarMovies} />
-            
+
             {/* MODIFICADO */}
-            
-            { loading ? (
+
+            {loading ? (
                 <Loading />
             ) : (
-            <View style={estilos.container}>
-                {/* Lista de comentarios */}
-                <Text style={estilos.textComentarios}>
-                    Comentarios:
-                </Text>
+                <View style={estilos.container}>
+                    {/* Lista de comentarios */}
+                    <Text style={estilos.textComentarios}>
+                        Comentarios:
+                    </Text>
 
-                <View style={[estilos.comentariosContainer, { paddingBottom: 20 }]}>
+                    <View style={[estilos.comentariosContainer, { paddingBottom: 20 }]}>
 
-                    {/* Mostrar comentarios*/}
-                    {comentarios.map((comentario, index) => (
-                        <View key={index} style={estilos.comentarioItem}>
-                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                <Icon name="user" size={20} color="#FFF" style={{ marginRight: 8 }} />
-                                <Text style={estilos.comentarioTexto}>{comentario.texto}</Text>
+                        {/* Mostrar comentarios*/}
+                        {comentarios.map((comentario, index) => (
+                            <View key={index} style={estilos.comentarioItem}>
+                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                    <Icon name="user" size={20} color="#FFF" style={{ marginRight: 8 }} />
+                                    <Text style={estilos.comentarioTexto}>{comentario.texto}</Text>
+                                </View>
+                                <Text style={estilos.comentarioUsuario}>{comentario.user}</Text>
                             </View>
-                            <Text style={estilos.comentarioUsuario}>{comentario.user}</Text>
-                        </View>
-                    ))}
+                        ))}
+                    </View>
+
+                    {/* Agregar un comentario */}
+                    <TextInput
+                        placeholder="¿Qué Opinas?"
+                        placeholderTextColor="#999999"
+                        value={textoComentario}
+                        onChangeText={(text) => setTextoComentario(text)}
+                        multiline
+                        style={estilos.textInput}
+                    />
+
+                    <TouchableOpacity style={estilos.button} onPress={handleEnviarComentario}>
+                        <Text style={estilos.buttonText}>Enviar Comentario</Text>
+                    </TouchableOpacity>
+
                 </View>
-
-                {/* Agregar un comentario */}
-                <TextInput
-                    placeholder="¿Qué Opinas?"
-                    placeholderTextColor="#999999"
-                    value={textoComentario}
-                    onChangeText={(text) => setTextoComentario(text)}
-                    multiline
-                    style={estilos.textInput}
-                />
-
-                <TouchableOpacity style={estilos.button} onPress={handleEnviarComentario}>
-                    <Text style={estilos.buttonText}>Enviar Comentario</Text>
-                </TouchableOpacity>
-
-            </View>
             )}
         </ScrollView>
     )

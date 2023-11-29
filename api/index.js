@@ -56,7 +56,7 @@ app.post("/comentarios", Comentarios.create)
 
 // set port, listen for requests
 const PORT = process.env.PORT || API_PORT;
-const IP = process.env.IP || '192.168.1.11';
+const IP = process.env.IP || '192.168.1.10';
 app.listen(PORT, IP, () => {
   console.log(`Server is running on ${IP}:${PORT}.`);
 });

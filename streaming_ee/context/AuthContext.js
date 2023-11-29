@@ -70,7 +70,7 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await axios.post(`${BASE_URL}/comentarios`, nuevoComentario);
       const comentarioCreado = response.data;
-      console.log('Comentario creado:', comentarioCreado);
+      //console.log('Comentario creado:', comentarioCreado);
     } catch (error) {
       console.error('Error al crear el comentario:', error);
     }
