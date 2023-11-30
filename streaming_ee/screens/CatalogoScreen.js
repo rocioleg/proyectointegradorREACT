@@ -10,32 +10,99 @@ import TrendingMovie from "../components/TrendingMovies";
 import MovieList from "../components/MovieList";
 import { useNavigation } from "@react-navigation/native";
 import Loading from "../components/loading";
-import { fetchTopRatedMovies, fetchTrendingMovies } from "../api/moviedb";
+import { fetchMovieGenres, fetchGenres } from "../api/moviedb";
 
 
 export default function CatalogoScreen(){
-  const [trending, setTrending]= useState([]);
-  //const [upcoming, setUpcoming]= useState([]);
-  const [toRated, setToRated]= useState([]);
   const navigation = useNavigation();
   const [loading,setLoading]= useState(true);
 
+  const [idRomance, setIDRomance] = useState();
+  const [idFantasy, setIDFantasy] = useState();
+  const [idComedy, setIDComedy] = useState();
+  const [idAdventure, setIDAdventure] = useState();
+
+  const [genreRomance, setRomance] = useState([]);
+  const [genreAdventure, setAdventure] = useState([]);
+  const [genreFantasy, setFantasy] = useState([]);
+  const [genreComedy, setComedy] = useState([]);
+
   useEffect(()=>{
-      getTrendingMovies();
-      //getUpComingMovies();
-      getTopRatedMovies();
+    getGenreIDs();
+    getRomance();
+    getAdventure();
+    getComedy();
+    getFantasy();
   },[])
-  const getTrendingMovies = async ()=>{
-      const data = await fetchTrendingMovies();
-      //console.log('got trending movies: ', data);
-      if(data && data.results) setTrending(data.results);
+
+  const getGenreIDs = async () => {
+    try {
+      const genresData = await fetchGenres();
+      const genres = genresData.genres;
+  
+      const romance = genres.find(genre => genre.name.toLowerCase() == 'romance');
+      if (romance) setIDRomance(romance.id);
+  
+      const fantasy = genres.find(genre => genre.name.toLowerCase() == 'fantasy');
+      if (fantasy) setIDFantasy(fantasy.id);
+  
+      const comedy = genres.find(genre => genre.name.toLowerCase() == 'comedy');
+      if (comedy) setIDComedy(comedy.id);
+  
+      const adventure = genres.find(genre => genre.name.toLowerCase() === 'adventure');
+      if (adventure) setIDAdventure(adventure.id);
+
       setLoading(false);
-  }
-  const getTopRatedMovies = async ()=>{
-      const data = await fetchTopRatedMovies();
-      //console.log('got top rated movies: ', data);
-      if(data && data.results) setToRated(data.results);
-  }
+
+    } catch (error) {
+      console.log('Error fetching genres: ', error);
+    }
+  };
+
+  const getRomance = async () => {
+    try {
+      const data = await fetchMovieGenres(idRomance);
+      if (data && data.results) {
+        setRomance(data.results);
+      }
+    } catch (error) {
+      console.log('Error fetching romance movies: ', error);
+    }
+  };
+
+  const getAdventure = async () => {
+    try {
+      const data = await fetchMovieGenres(idAdventure);
+      if (data && data.results) {
+        setAdventure(data.results);
+      }
+    } catch (error) {
+      console.log('Error fetching Adventure movies: ', error);
+    }
+  };
+
+  const getComedy = async () => {
+   try {
+    const data = await fetchMovieGenres(idComedy);
+    if (data && data.results) {
+      setComedy(data.results);
+    }
+    } catch (error) {
+    console.log('Error fetching Comedy movies: ', error);
+   }
+  };
+
+  const getFantasy = async () => {
+    try {
+      const data = await fetchMovieGenres(idFantasy);
+      if (data && data.results) {
+        setFantasy(data.results);
+      }
+    } catch (error) {
+      console.log('Error fetching Fantasy movies: ', error);
+    }
+  };
+
   return(
       <View className="flex-1 bg-neutral-800">
           {/*busqueda y logo */}
@@ -59,12 +126,17 @@ export default function CatalogoScreen(){
                           showsVerticalScrollIndicator={false}
                           contentContainerStyle={{paddingBottom: 10}}
                       >
-                      {/*Trending Movie Carousel */}
+                      {/* Peliculas de aventura */}
+                      <MovieList title="Adventure" data={genreAdventure} />
 
-                      { trending.length>0 && <TrendingMovie data={trending}/>}
+                      {/* Peliculas de comedia */}
+                      <MovieList title="Comedy" data={genreComedy} />
+                      
+                      {/* Peliculas de romance */}
+                      <MovieList title="Romance" data={genreRomance} />
 
-                      {/*top rated movies row */}
-                      <MovieList title="Top Rated" data={toRated} />
+                      {/* Peliculas de fantasia */}
+                      <MovieList title="Fantasy" data={genreFantasy} />
                   </ScrollView>
               )
           }

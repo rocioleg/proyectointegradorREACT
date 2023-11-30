@@ -18,9 +18,9 @@ const AppNav = () => {
     if(splashLoading){
         
      return(
-        <View style={{flex:1, justifyContent: 'center', alignItems: 'center'}}>
+        <View style={{flex:1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'black'}}>
             <ActivityIndicator size={'large'} />
-            <Text>Esperando...</Text>
+            <Text style={{color: 'white'}}>Esperando...</Text>
         </View>
      );
     }

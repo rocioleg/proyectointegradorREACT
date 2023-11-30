@@ -21,7 +21,7 @@ export const image185 = path=>path? `https://image.tmdb.org/t/p/w185${path}` : n
 export const fallbackMoviePoster = 'https://img.myloview.com/stickers/white-laptop-screen-with-hd-video-technology-icon-isolated-on-grey-background-abstract-circle-random-dots-vector-illustration-400-176057922.jpg';
 export const fallbackPersonImage = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmUiF-YGjavA63_Au8jQj7zxnFxS_Ay9xc6pxleMqCxH92SzeNSjBTwZ0l61E4B3KTS7o&usqp=CAU';
 
-const genres = '`https://api.themoviedb.org/3/genre/movie/list?api_key=cf161086749eac1388bb66692fae9307`'
+const genres = `https://api.themoviedb.org/3/genre/movie/list?api_key=cf161086749eac1388bb66692fae9307`
 const movieGenres = genre => `https://api.themoviedb.org/3/discover/movie?api_key=cf161086749eac1388bb66692fae9307&with_genres=${genre}`
 
 const apiCall = async (endpoint, params)=>{
@@ -52,8 +52,14 @@ export const fetchTopRatedMovies = ()=>{
     return apiCall(topRatedMoviesEndpoint);
 }
 
+// Para los generos 
+
 export const fetchGenres = ()=>{
     return apiCall(genres);
+}
+
+export const fetchMovieGenres = (genre)=>{
+    return apiCall(movieGenres(genre));
 }
 
 // movie screen apis
@@ -68,10 +74,6 @@ export const fetchMovieCredits = (movieId)=>{
 
 export const fetchSimilarMovies = (movieId)=>{
     return apiCall(similarMoviesEnpoint(movieId));
-}
-
-export const fetchMovieGenres = (genre)=>{
-    return apiCall(movieGenres(genre));
 }
 
 // person screen apis
