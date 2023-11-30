@@ -1,5 +1,5 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext, useRef } from "react";
 import { View, Text, ScrollView, TouchableOpacity, Dimensions, Image, StatusBar, TextInput, StyleSheet } from "react-native";
 import { ChevronLeftIcon } from "react-native-heroicons/outline";
 import { HeartIcon } from "react-native-heroicons/solid";
@@ -10,13 +10,29 @@ import Cast from "../components/cast";
 import MovieList from "../components/MovieList";
 import Loading from "../components/loading";
 import Icon from 'react-native-vector-icons/FontAwesome';
-import * as ScreenOrientation from 'expo-screen-orientation';
+
+import * as Notifications from 'expo-notifications';
+import * as Device from 'expo-device';
 
 import { fallbackMoviePoster, fetchMovieCredits, fetchMovieDetails, fetchSimilarMovies, image500 } from "../api/moviedb";
 
 var { width, height } = Dimensions.get('window');
 
 import { AuthContext } from '../context/AuthContext'
+
+Notifications.setNotificationHandler({
+    
+    handleNotification: async () => ({
+   
+      shouldShowAlert: true,
+   
+      shouldPlaySound: false,
+   
+      shouldSetBadge: false,
+   
+    }),
+});
+
 
 export default function MovieScreen() {
     const { params: item } = useRoute();
@@ -33,10 +49,10 @@ export default function MovieScreen() {
     const [comentarios, setComentarios] = useState([]);
     
     useEffect(() => {
-        setLoading(true);
         getMovieDetails(item.id);
         getMovieCredits(item.id);
         getSimilarMovie(item.id);
+        setLoading(false);
     }, [item])
 
     useEffect(() => {
@@ -79,6 +95,39 @@ export default function MovieScreen() {
             //console.log('El campo de texto está vacío');
         }
     };
+
+    // NOTIFICACIONES //
+    const [expoPushToken, setExpoPushToken] = useState('');
+    
+    const [notification, setNotification] = useState(false);
+    
+    const notificationListener = useRef();
+    
+    const responseListener = useRef();
+    
+    useEffect(() => {
+    
+        registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
+        
+        notificationListener.current = Notifications.addNotificationReceivedListener(
+        
+            notification => {
+            setNotification(notification);
+            },
+        );
+        responseListener.current = Notifications.addNotificationResponseReceivedListener(
+            response => {
+                console.log(response);
+            },
+        );
+        return () => {
+            Notifications.removeNotificationSubscription(
+            notificationListener.current,
+            );
+            Notifications.removeNotificationSubscription(responseListener.current);
+        };
+    }, []);
+
 
     return (
         <ScrollView
@@ -208,7 +257,10 @@ export default function MovieScreen() {
                         style={estilos.textInput}
                     />
 
-                    <TouchableOpacity style={estilos.button} onPress={handleEnviarComentario}>
+                    <TouchableOpacity style={estilos.button} onPress={() => {
+                        handleEnviarComentario();
+                        schedulePushNotification();
+                    }}>
                         <Text style={estilos.buttonText}>Enviar Comentario</Text>
                     </TouchableOpacity>
 
@@ -269,3 +321,77 @@ const estilos = StyleSheet.create({
         paddingBottom: 10
     }
 });
+
+async function schedulePushNotification() {
+    await Notifications.scheduleNotificationAsync({
+   
+      content: {
+   
+        title: "Notificacion",
+   
+        body: 'Se agrego un comentario',
+   
+   
+      },
+   
+      trigger: {seconds: 2},
+   
+    });
+   
+   }
+
+async function registerForPushNotificationsAsync() {
+    
+    let token;
+   
+    if (Platform.OS === 'android') {
+   
+      await Notifications.setNotificationChannelAsync('default', {
+   
+        name: 'default',
+   
+        importance: Notifications.AndroidImportance.MAX,
+   
+        vibrationPattern: [0, 250, 250, 250],
+   
+        lightColor: '#FF231F7C',
+   
+      });
+   
+    }
+   
+    if (Device.isDevice) {
+   
+      const {status: existingStatus} = await Notifications.getPermissionsAsync();
+   
+      let finalStatus = existingStatus;
+   
+      if (existingStatus !== 'granted') {
+   
+        const {status} = await Notifications.requestPermissionsAsync();
+   
+        finalStatus = status;
+   
+      }
+   
+      if (finalStatus !== 'granted') {
+   
+        alert('Failed to get device push token for push notification!');
+   
+        return;
+   
+      }
+   
+      token = (await Notifications.getExpoPushTokenAsync()).data;
+   
+      console.log(token);
+   
+    } else {
+   
+      alert('Must use a physical device for Push Notifications');
+   
+    }
+   
+    return token;
+   
+   }

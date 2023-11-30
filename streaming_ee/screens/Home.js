@@ -12,12 +12,10 @@ import { useNavigation } from "@react-navigation/native";
 import Loading from "../components/loading";
 import { Ionicons } from '@expo/vector-icons';
 import { fetchTopRatedMovies, fetchTrendingMovies} from "../api/moviedb";
-import * as ScreenOrientation from 'expo-screen-orientation';
 
 export default function Home() {
     
     const [trending, setTrending] = useState([]);
-    //const [upcoming, setUpcoming]= useState([]);
     const [toRated, setToRated] = useState([]);
     const navigation = useNavigation();
     const [loading, setLoading] = useState(true);

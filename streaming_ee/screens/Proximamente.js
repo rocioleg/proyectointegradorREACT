@@ -11,7 +11,6 @@ import { useNavigation } from "@react-navigation/native";
 import Loading from "../components/loading";
 import { fetchUpcomingMovies } from "../api/moviedb";
 
-
 export default function Proximamente(){
   const [upcoming, setUpcoming]= useState([]);
   const navigation = useNavigation();
@@ -33,8 +32,8 @@ export default function Proximamente(){
           {/*busqueda y logo */}
           <SafeAreaView className="mb-3" style={{ paddingTop: 30}}>
               <StatusBar style="light" />
-              <View className="flex-row justify-between items-center mx-4">
-                  <Bars3CenterLeftIcon size="30" strokeWidth={2} color="white"/>
+              <View className="flex-row justify-between items-center mx-4">     
+
                   <Text className="text-white text-3xl font-bold">
                       <Text style={styles.text}>M</Text>ovies
                   </Text>

@@ -58,9 +58,6 @@ const ProximamenteStackNavigator = () => {
   return (
     <Stack.Navigator options={{headerShown: false}}>
       <Stack.Screen name="ProximamenteTe" options={{headerShown: false}} component={Proximamente} />
-
-      <Stack.Screen name="Menu" options={{headerShown: false}} component={Hamburguesa} />
-
       <Stack.Screen name="Movie" options={{headerShown: false}} component={MovieScreen} />
       <Stack.Screen name="Person" options={{headerShown: false}} component={PersonScreen} />
       <Stack.Screen name="Search" options={{headerShown: false}} component={SearchScreen} />

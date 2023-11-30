@@ -12,7 +12,6 @@ import { useNavigation } from "@react-navigation/native";
 import Loading from "../components/loading";
 import { fetchMovieGenres, fetchGenres } from "../api/moviedb";
 
-
 export default function CatalogoScreen(){
   const navigation = useNavigation();
   const [loading,setLoading]= useState(true);
@@ -28,40 +27,15 @@ export default function CatalogoScreen(){
   const [genreComedy, setComedy] = useState([]);
 
   useEffect(()=>{
-    getGenreIDs();
     getRomance();
     getAdventure();
     getComedy();
     getFantasy();
   },[])
 
-  const getGenreIDs = async () => {
-    try {
-      const genresData = await fetchGenres();
-      const genres = genresData.genres;
-  
-      const romance = genres.find(genre => genre.name.toLowerCase() == 'romance');
-      if (romance) setIDRomance(romance.id);
-  
-      const fantasy = genres.find(genre => genre.name.toLowerCase() == 'fantasy');
-      if (fantasy) setIDFantasy(fantasy.id);
-  
-      const comedy = genres.find(genre => genre.name.toLowerCase() == 'comedy');
-      if (comedy) setIDComedy(comedy.id);
-  
-      const adventure = genres.find(genre => genre.name.toLowerCase() === 'adventure');
-      if (adventure) setIDAdventure(adventure.id);
-
-      setLoading(false);
-
-    } catch (error) {
-      console.log('Error fetching genres: ', error);
-    }
-  };
-
   const getRomance = async () => {
     try {
-      const data = await fetchMovieGenres(idRomance);
+      const data = await fetchMovieGenres(10749);
       if (data && data.results) {
         setRomance(data.results);
       }
@@ -72,7 +46,7 @@ export default function CatalogoScreen(){
 
   const getAdventure = async () => {
     try {
-      const data = await fetchMovieGenres(idAdventure);
+      const data = await fetchMovieGenres(12);
       if (data && data.results) {
         setAdventure(data.results);
       }
@@ -83,7 +57,7 @@ export default function CatalogoScreen(){
 
   const getComedy = async () => {
    try {
-    const data = await fetchMovieGenres(idComedy);
+    const data = await fetchMovieGenres(35);
     if (data && data.results) {
       setComedy(data.results);
     }
@@ -94,9 +68,10 @@ export default function CatalogoScreen(){
 
   const getFantasy = async () => {
     try {
-      const data = await fetchMovieGenres(idFantasy);
+      const data = await fetchMovieGenres(14);
       if (data && data.results) {
         setFantasy(data.results);
+        setLoading(false);
       }
     } catch (error) {
       console.log('Error fetching Fantasy movies: ', error);
@@ -108,9 +83,8 @@ export default function CatalogoScreen(){
           {/*busqueda y logo */}
           <SafeAreaView className="mb-3" style={{ paddingTop: 30}}>
               <StatusBar style="light" />
-              <View className="flex-row justify-between items-center mx-4">
-                  <Bars3CenterLeftIcon size="30" strokeWidth={2} color="white"/>
-                  <Text className="text-white text-3xl font-bold">
+              <View className="flex-row justify-between items-center mx-4">          
+                  <Text className="text-white text-3xl font-bold mx-auto">
                       <Text style={styles.text}>M</Text>ovies
                   </Text>
                   <TouchableOpacity onPress={()=>navigation.navigate('Search')}>
